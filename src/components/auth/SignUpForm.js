@@ -11,11 +11,9 @@ class SignUpForm extends Component {
         <h2>Sign In</h2>
         <form onSubmit={handleSubmit}>
           <div>
-            <label>Email</label>
             <Field name="email" component={ErrorField} />
           </div>
           <div>
-            <label>Password</label>
             <Field name="password" component={ErrorField} type="password" />
           </div>
           <div>
