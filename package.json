@@ -7,7 +7,9 @@
   },
   "dependencies": {
     "email-validator": "^2.0.4",
+    "firebase": "^5.5.5",
     "history": "^4.7.2",
+    "immutable": "^3.8.2",
     "react": "^16.5.2",
     "react-dom": "^16.5.2",
     "react-redux": "^5.0.7",
