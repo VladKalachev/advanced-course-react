@@ -4,18 +4,16 @@ import emailValidator from "email-validator";
 import ErrorField from "../common/ErrorField";
 
 class SignUpForm extends Component {
+  static propTypes = {};
+
   render() {
     const { handleSubmit } = this.props;
     return (
       <div>
-        <h2>Sign In</h2>
+        <h2>Sign Up</h2>
         <form onSubmit={handleSubmit}>
-          <div>
-            <Field name="email" component={ErrorField} />
-          </div>
-          <div>
-            <Field name="password" component={ErrorField} type="password" />
-          </div>
+          <Field name="email" component={ErrorField} />
+          <Field name="password" component={ErrorField} type="password" />
           <div>
             <input type="submit" />
           </div>
@@ -31,8 +29,8 @@ const validate = ({ email, password }) => {
   if (!email) errors.email = "email is required";
   else if (!emailValidator.validate(email)) errors.email = "invalid email";
 
-  if (!password) errors.password = "passord is required";
-  else if (password.lenght < 8) errors.password = "to short";
+  if (!password) errors.password = "password is required";
+  else if (password.length < 8) errors.password = "to short";
 
   return errors;
 };
