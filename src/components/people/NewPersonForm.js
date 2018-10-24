@@ -29,7 +29,7 @@ function validate({ firstName, email }) {
   if (!firstName) errors.firstName = "first name is required";
 
   if (!email) errors.email = "email os required";
-  else if (!validateEmail.validate(email)) errors.email = "email is invalid";
+  else if (!emailValidator.validate(email)) errors.email = "email is invalid";
 
   return errors;
 }
