@@ -1,7 +1,7 @@
 import { appName } from "../confige";
 import firebase from "firebase";
 import { Record, List } from "immutable";
-import { put, takeEvery } from "redux-saga/effects";
+import { put, call, takeEvery } from "redux-saga/effects";
 import { generateId } from "./utils";
 
 const ReducerState = Record({
@@ -41,8 +41,8 @@ export function addPerson(person) {
   };
 }
 
-const addPeasonSaga = function*(action) {
-  const id = generateId();
+export const addPeasonSaga = function*(action) {
+  const id = yield call(generateId);
 
   yield put({
     type: ADD_PERSON,
