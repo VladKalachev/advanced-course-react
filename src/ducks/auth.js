@@ -1,7 +1,8 @@
 import { appName } from "../confige";
 import firebase from "firebase";
 import { Record } from "immutable";
-import { all, call, put, take, cps } from "redux-saga/effects";
+import { all, call, put, take, cps, takeEvery } from "redux-saga/effects";
+import { push } from "react-router-redux";
 
 const ReducerRecord = Record({
   user: null,
@@ -18,6 +19,11 @@ export const SIGN_UP_ERROR = `${appName}/${moduleName}/SIGN_UP_ERROR`;
 export const SIGN_IN_REQUEST = `${appName}/${moduleName}/SIGN_IN_REQUEST`;
 export const SIGN_IN_SUCCESS = `${appName}/${moduleName}/SIGN_IN_SUCCESS`;
 export const SIGN_IN_ERROR = `${appName}/${moduleName}/SIGN_IN_ERROR`;
+
+export const SIGN_OUT_REQUEST = `${appName}/${moduleName}/SIGN_OUT_REQUEST`;
+export const SIGN_OUT_SUCCESS = `${appName}/${moduleName}/SIGN_OUT_SUCCESS`;
+export const SIGN_OUT_ERROR = `${appName}/${moduleName}/SIGN_OUT_ERROR`;
+
 // reducer
 export default function reducer(state = new ReducerRecord(), action) {
   const { type, payload, error } = action;
@@ -37,6 +43,9 @@ export default function reducer(state = new ReducerRecord(), action) {
     case SIGN_IN_ERROR:
       return state.set("loading", false).set("error", error);
 
+    case SIGN_UP_SUCCESS:
+      return new ReducerRecord();
+
     default:
       return state;
   }
@@ -48,6 +57,12 @@ export function signUp(email, password) {
   return {
     type: SIGN_UP_REQUEST,
     payload: { email, password }
+  };
+}
+
+export function signOut() {
+  return {
+    type: SIGN_OUT_REQUEST
   };
 }
 
@@ -105,13 +120,15 @@ export const signUpSaga = function*() {
 
 export const watchStatusChange = function*() {
   const auth = firebase.auth();
-  try {
-    yield cps([auth, auth.onAuthStateChanged]);
-  } catch (user) {
-    yield put({
-      type: SIGN_IN_SUCCESS,
-      payload: { user }
-    });
+  while (true) {
+    try {
+      yield cps([auth, auth.onAuthStateChanged]);
+    } catch (user) {
+      yield put({
+        type: SIGN_IN_SUCCESS,
+        payload: { user }
+      });
+    }
   }
 };
 
@@ -123,6 +140,22 @@ firebase.auth().onAuthStateChanged(user => {
   });
 });
 
+export const singOutSaga = function*() {
+  const auth = firebase.auth();
+  try {
+    yield call([auth, auth.signOut]);
+    yield put({
+      type: SIGN_OUT_SUCCESS
+    });
+
+    yield put(push("/auth/signin"));
+  } catch (err) {}
+};
+
 export const saga = function*() {
-  yield all([signUpSaga(), watchStatusChange()]);
+  yield all([
+    signUpSaga(),
+    watchStatusChange(),
+    takeEvery(SIGN_OUT_REQUEST, singOutSaga)
+  ]);
 };
